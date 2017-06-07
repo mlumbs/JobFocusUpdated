@@ -44,9 +44,17 @@ public class MainActivity extends AppCompatActivity
         //collapsingToolbar.setCollapsedTitleGravity(2);
         Log.v("Tracking Data singleton", Data.track_objects+"");
        // alarm.setAlarm(getApplicationContext());
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace
-                (R.id.flContent, new List_recycle()).commit();
+
+
+        Bundle front =new Bundle();
+        front.putBoolean("fr",data.getFront());
+        List_recycle fragment =  new List_recycle();
+        fragment.setArguments(front);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.flContent, fragment).commit();
+
+
+
         //Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),Logs.getCarrier(getApplicationContext()));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -85,6 +93,8 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+            Intent Load =new Intent(getApplicationContext(), LoadService.class);
+            startService(Load);
             return true;
         }
 

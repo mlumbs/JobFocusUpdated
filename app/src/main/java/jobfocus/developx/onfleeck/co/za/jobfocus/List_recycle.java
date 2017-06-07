@@ -22,10 +22,11 @@ import data.JobContracts;
  */
 public class List_recycle extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-
+//Have a list attribute or value of the notification
 
     public static final String LOG= List_recycle.class.getSimpleName();
     public static final int JOB_LOADER = 0;
+    boolean front;
     private static final String[] JOB_COLUMNS = {
             JobContracts.JobEntry._ID ,
             JobContracts.JobEntry.COLUMN_C,
@@ -59,7 +60,7 @@ public class List_recycle extends Fragment implements LoaderManager.LoaderCallba
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        front= getArguments().getBoolean("fr");
         View rootView = inflater.inflate(R.layout.list_recycle_feed,
                 container, false);
 
@@ -71,7 +72,7 @@ public class List_recycle extends Fragment implements LoaderManager.LoaderCallba
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new JobAdapter(getContext());
+        mAdapter = new JobAdapter(getContext(),front);
         mRecyclerView.setAdapter(mAdapter);
 
         return rootView;

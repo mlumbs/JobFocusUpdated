@@ -31,6 +31,7 @@ public class Data {
     public static final String LAST_ENTRY = "last_entry"; //Read the last db entry,This by default is -1
     public static final String BACK_ENTRY = "back_entry"; //The default is background true,assume the app is always offline
     public static final String REC_ENTRY="receive_entry";
+    public static final String NOTI_FRONT = "MainActivity_UI";//This holds the ui notification area,must be boolean,if it true this highlights
 /*
 Decided to change the above to public since they also point to a public file named sharedPreference
 
@@ -61,6 +62,11 @@ Decided to change the above to public since they also point to a public file nam
     public void storeNotification(String head,String body) {
         editor.putString(KEY_NOTI_HEADER, head);
         editor.putString(KEY_NOTI_BODY, body);
+        editor.commit();
+    }
+
+    public void storeFront(boolean t) {
+        editor.putBoolean(NOTI_FRONT, t);
         editor.commit();
     }
 
@@ -106,6 +112,10 @@ Decided to change the above to public since they also point to a public file nam
 
     public Boolean getBack() {
         return sharedPref.getBoolean(BACK_ENTRY,true);
+    }
+
+    public Boolean getFront() {
+        return sharedPref.getBoolean(NOTI_FRONT,true);
     }
 
     public String getPromo() {
