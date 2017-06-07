@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--<item name="activity_main" type="layout">@layout/tab</item>-->
+
+    <bool name="is_tab_">false</bool>
+    <bool name="is_tab_land_">false</bool>
+    <bool name="is_tab_port_">false</bool>
+</resources>

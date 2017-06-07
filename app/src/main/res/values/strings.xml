@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Job Share</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <!--<string name="head" translatable="false">jobfocus.developx.onfleeck.co.za.jobfocus_header</string>-->
+    <!--<string name="content" translatable="false">jobfocus.developx.onfleeck.co.za.jobfocus_content</string>-->
+    <!--<string name="old" translatable="false">jobfocus.developx.onfleeck.co.za.jobfocus_old</string>-->
+   <string name="key" translatable="false">jobfocus.developx.onfleeck.co.za.jobfocus_key</string>
+
+</resources>
