@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import CompontUtils.NotificationUtils;
+
 import data.Data;
 import data.JobContracts;
 import global.MyApp;
@@ -35,33 +36,36 @@ public class LoadService extends IntentService {
      *
      * param name Used to name the worker thread, important only for debugging.
      */
-    public static final String TAG = "Loading ";
+    public static final String TAG = "Loading";
+    SharedPreferences sharedPref;
+    public boolean server_approval;
     public LoadService() {
         super("LoadService");
+        server_approval=false;
     }
 
 
 
-    public static final String URL_BASE = "http://jobshareapp.jobl.co.za/contentfeeds.php?";
+   // public static final String URL_BASE = "http://jobshareapp.jobl.co.za/contentfeeds.php?";
    // public  static final String CV_url="http://192.168.43.27/content.php?";
+     public  static final String URL_BASE="http://192.168.42.149/main/contentfeeds.php?";
+
     String QUERY_PARAM = "q";
     String db;
     SharedPreferences.Editor editor;
-
     @Override
     protected void onHandleIntent(Intent intent) {
-        Context context=this;
-        SharedPreferences sharedPref = context.getSharedPreferences(
+        sharedPref = getSharedPreferences(
                 Data.PREF_FILE, Context.MODE_PRIVATE);
         db=sharedPref.getString(Data.LAST_ENTRY,"0");
-        Uri builtUri = Uri.parse(URL_BASE).buildUpon().appendQueryParameter(QUERY_PARAM, db).build();
+        Uri builtUri = Uri.parse(URL_BASE).buildUpon().appendQueryParameter(QUERY_PARAM, db).appendQueryParameter("app_ver",sharedPref.getInt(Data.APP_VERSION,0)+"").build();
         try {
-            //sendNotification("Job opportunities have Arrived");
             getDataFromJson(loadJsonFromNetworkSecond(builtUri.toString()));
             editor =sharedPref.edit();
             editor.putString(Data.LAST_ENTRY,last_Job_entry(this)+"");
-            editor.commit();
-
+            editor.apply();
+         //sendNotification("Job opportunities have Arrived");
+            new NotificationUtils(this).sendNotification(sharedPref.getString(Data.KEY_NOTI_HEADER,"000/"),sharedPref.getString(Data.KEY_NOTI_BODY,"000/"),server_approval);
         } catch (JSONException e) {
             Log.v("JSON","Failed");
             e.printStackTrace();
@@ -76,42 +80,12 @@ public class LoadService extends IntentService {
     }
 
 
-
-
-
-
-    //this delete by force entries ,specified by values given by the server or some specific data
-    //We aim to do this fuction instead of AutoDelete ,The deleting mechanism depends on the server data feeds
-    //this must be an array preffered
-   public void DeleteIDbyForceK(Context c,String kvalue[]){
-
-       //c.getContentResolver().delete(JobContracts.JobEntry.BuildJobId("IT"),//Same as above reason ,this point to the job matche entry specifically
-         //      JobContracts.JobEntry.COLUMN_EntryID + " = ?",
-          //     new String[]{kvalue});
-
-       c.getContentResolver().delete(JobContracts.JobEntry.CONTENT_URI,//Same as above reason ,this point to the job matche entry specifically
-               JobContracts.JobEntry.COLUMN_EntryID + " = ?",
-               kvalue);
-
-   }
-
-   //This is delete less than Id,this msg receives one id from a server to delete less than entries
-    public void DeleteLessIDbyForceK(Context c,String kvalue){
-
-        c.getContentResolver().delete(JobContracts.JobEntry.CONTENT_URI,//Same as above reason ,this point to the job matche entry specifically
-                JobContracts.JobEntry.COLUMN_EntryID + " < ?",
-                new String[]{kvalue});
-
-    }
-
     private String loadJsonFromNetworkSecond(String urlString) throws IOException {
-        Log.v("ABB",urlString);
-        //Log.v(TAG,urlString);
+        Log.v(TAG,urlString);
         URL url =new URL(urlString);
         String JsonString =null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
-
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -157,27 +131,21 @@ public class LoadService extends IntentService {
                 }
             }
         }
-
-
-
-
         return JsonString;//returns JSON
     }
 
-
-
-    public void getDataFromJson(String JsonStr)throws JSONException{
-
-try { //try catch for Job Entries
-
-Log.v("ABB",JsonStr);
+    public void getDataFromJson(String JsonStr)throws JSONException
+ {
+      try
+       {
+    Log.v(TAG,JsonStr);
     JSONObject Json = new JSONObject(JsonStr);
-
-
-    if(!Json.isNull("entries")) {
-        Log.v("Z3", "This is not indeed really null");
+          if(!Json.isNull("entries"))
+          {
+        Log.v(TAG, "This is not null");
         JSONArray JArray = Json.getJSONArray("entries");//This return null if network is unavailable
-        for (int z = 0; z < JArray.length(); z++) {
+        for (int z = 0; z < JArray.length(); z++)
+               {
             String c = JArray.getJSONObject(z).getString("c");
             String po = JArray.getJSONObject(z).getString("po");
             String p = JArray.getJSONObject(z).getString("p");
@@ -186,28 +154,57 @@ Log.v("ABB",JsonStr);
             String e = JArray.getJSONObject(z).getString("e");
             String id = JArray.getJSONObject(z).getString("id");
             String date = JArray.getJSONObject(z).getString("created_at");
-            ToAaddJobEntry(this,c,po,id,p,date,f,"",n,e,"");
-
-        }
-
-    }
-
-
-
-}
-catch (JSONException e){
+            String extras = JArray.getJSONObject(z).getString("id");
+                   if(Integer.parseInt(id)==Data.notification){
+                  // data.storeNotification(c,po);
+                       editor =sharedPref.edit();
+                       editor.putString(Data.KEY_NOTI_HEADER,c);
+                       editor.putString(Data.KEY_NOTI_BODY,po);
+                       editor.apply();
+                       server_approval=true;
+                   }
+                   ToAaddJobEntry(this,c,po,id,p,date,f,"",n,e,id);
+              }
+          }
+       }
+catch (JSONException e)
+  {
     Log.e(TAG, e.getMessage(), e);
     e.printStackTrace();
-} catch (NullPointerException b){
+  } catch (NullPointerException b)
+  {
     b.printStackTrace();
-}catch (Exception c){
+  }catch (Exception c)
+  {
     c.printStackTrace();
-}
+  }
+
+//READ THE SECOND PART
+        try {
+         JSONObject Json = new JSONObject(JsonStr);
+         if(!Json.isNull("noti")) {
+             JSONArray JArray = Json.getJSONArray("noti");
+             for(int z=0;z<JArray.length();z++) {
+                 String a = JArray.getJSONObject(z).getString("a");
+                 String b = JArray.getJSONObject(z).getString("b");
+                 String c = JArray.getJSONObject(z).getString("c");
+                 String d = JArray.getJSONObject(z).getString("d");
+                 String e = JArray.getJSONObject(z).getString("e");
+                 long v = (Long.parseLong(e))+ 259200L;
+                // ToAddNotification(this, a, b, c, d, v + "");
+                 // sendNotification(b,a);
+             }
+         }
+     }catch (JSONException e){
+         Log.e(TAG, e.getMessage(), e);
+         e.printStackTrace();
+     }catch (NullPointerException b){
+         b.printStackTrace();
+     }
 
 
 
-
-    }
+ }
 
     public long last_Job_entry(Context c){
         long last =0;

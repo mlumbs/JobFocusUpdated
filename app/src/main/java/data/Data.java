@@ -16,6 +16,8 @@ public class Data {
     public static int track_objects =0;
     // Editor for Shared preferences
     SharedPreferences.Editor editor;
+    public static int general=2;
+    public static int notification=3;
 
 
     private String TAG = Data.class.getSimpleName();
@@ -32,6 +34,7 @@ public class Data {
     public static final String BACK_ENTRY = "back_entry"; //The default is background true,assume the app is always offline
     public static final String REC_ENTRY="receive_entry";
     public static final String NOTI_FRONT = "MainActivity_UI";//This holds the ui notification area,must be boolean,if it true this highlights
+    public static final String APP_VERSION = "APP_version";
 /*
 Decided to change the above to public since they also point to a public file named sharedPreference
 
@@ -42,6 +45,7 @@ Decided to change the above to public since they also point to a public file nam
            this.sharedPref =m.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
            this.editor =sharedPref.edit();
            track_objects++;
+           storeApp_version(2);
 }
 
     public void storeFace(String face) {
@@ -55,7 +59,7 @@ Decided to change the above to public since they also point to a public file nam
     }
     public void EditBack(boolean face) {
         editor.putBoolean(BACK_ENTRY, face);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -72,6 +76,10 @@ Decided to change the above to public since they also point to a public file nam
 
     public void storeTone(Boolean tone) {
         editor.putBoolean(KEY_TONE_, tone);
+        editor.commit();
+    }
+    public void storeApp_version(int ver) {
+        editor.putInt(APP_VERSION, ver);
         editor.commit();
     }
 
@@ -97,6 +105,9 @@ Decided to change the above to public since they also point to a public file nam
     public String getNotificationHead() {
         return sharedPref.getString(KEY_NOTI_HEADER,"Head not Initialized");
     }
+    public int getApp_version() {
+        return sharedPref.getInt(APP_VERSION,2);
+    }
 
     public String getNotificationBody() {
         return sharedPref.getString(KEY_NOTI_BODY,"body not Initialized");
@@ -111,7 +122,7 @@ Decided to change the above to public since they also point to a public file nam
     }
 
     public Boolean getBack() {
-        return sharedPref.getBoolean(BACK_ENTRY,true);
+        return sharedPref.getBoolean(BACK_ENTRY,false);
     }
 
     public Boolean getFront() {

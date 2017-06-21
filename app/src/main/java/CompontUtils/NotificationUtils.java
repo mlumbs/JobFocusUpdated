@@ -48,10 +48,8 @@ public final class NotificationUtils {
 
    public NotificationUtils(Context c){
        this.mContext=c;
-
-
-
    }
+
     public void showNotificationMessage(String title, String message, String timeStamp, Intent intent) {
         showNotificationMessage(title, message, timeStamp, intent, null);
     }
@@ -237,9 +235,8 @@ public final class NotificationUtils {
 
     }
 
-    public void sendNotification(String msg,String Title) {
+    public void sendNotification(String msg,String Title,boolean server_approval) {
         SharedPreferences sharedPref = mContext.getSharedPreferences(Data.PREF_FILE, Context.MODE_PRIVATE);
-
             mNotificationManager = (NotificationManager)
                     mContext.getSystemService(Context.NOTIFICATION_SERVICE);
             Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -247,7 +244,7 @@ public final class NotificationUtils {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent contentIntent = PendingIntent.getActivity( mContext, 0,
                   intent , 0);
-          if(sharedPref.getBoolean(Data.BACK_ENTRY,true)) {
+          if(server_approval) {
               NotificationCompat.Builder mBuilder =
                       new NotificationCompat.Builder(mContext)
                               .setSmallIcon(R.mipmap.ic_launcher)

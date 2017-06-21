@@ -150,14 +150,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        data.EditBack(true);
+        data.EditBack(false);
         NotificationUtils.clearNotificationsID(this,NotificationUtils.NOTIFICATION_ID);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        data.EditBack(false);
+        data.EditBack(true);
     }
 
 

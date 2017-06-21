@@ -14,14 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import data.DatabaseCrud;
 import data.JobContracts;
 
 
 public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
-
-    private static final int VIEW_NOTIFICATION = 0;
-    private static final int VIEW_ANY = 1;
-
     @Override
     public int getItemCount()
     {
@@ -32,10 +29,10 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
 
     private Cursor mCurso;
     private Context mContext;
-    private boolean mfront;
     FragmentManager fragmentManager;
     CustomDialogFragment newFragment ;
     Boolean istab;
+    private boolean mfront;
     public class cHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
 
@@ -43,7 +40,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
         public final TextView position ;
         public final TextView face;
         public final TextView face2;
-        public final TextView noti;
+        public final TextView Title ;
+        public final TextView Body ;
 
 
         public cHolder(View view)
@@ -52,7 +50,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
             position=(TextView) view.findViewById(R.id.po);
             face=(TextView) view.findViewById(R.id.f);
             face2=(TextView) view.findViewById(R.id.f2);
-            noti= (TextView) view.findViewById(R.id.noti);
+            Title= (TextView) view.findViewById(R.id.Title_Notification);
+            Body= (TextView) view.findViewById(R.id.Body_Notification);
             view.setOnClickListener(this);
         }
 
@@ -89,39 +88,23 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
         mContext=c;
         FragmentActivity a;
         a=(FragmentActivity)mContext;
-        mfront=front;
-       // mfront=false;
         fragmentManager = a.getSupportFragmentManager();
         newFragment = new CustomDialogFragment();
         istab=c.getResources().getBoolean(R.bool.is_tab_);
-        a=a;
-        //a=(Activity)mContext;
-        // Roboto = Typeface.createFromAsset((a.getAssets()),"Roboto-Bold.ttf");
-        //Roboto =Helper.mFont(2,c);
-
+        mfront=front;
     }
 
     @Override
     public cHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-       // View v;
+        View v;
 
-       // int layoutId0 =R.layout.each_card;
-      //  int layoutId1 =R.layout.each_card_tab_port;
-        //int layoutId2=R.layout.each_card_tab_land;
-        int layoutId = -1;
-        switch (viewType) {
-            case VIEW_NOTIFICATION: {
-                layoutId = R.layout.single_notification_card;
-                break;
-            }
-            case VIEW_ANY: {
-                layoutId = R.layout.each_card;
-                break;
-            }
-        }
+        int layoutId0 =R.layout.each_card;
+        int layoutId1 =R.layout.each_card_tab_port;
+        int layoutId2=R.layout.each_card_tab_land;
 
-     /*   if (istab) { //check if it a tab then ....if it a tab then check if it potrait or landscape
+
+        if (istab) { //check if it a tab then ....if it a tab then check if it potrait or landscape
 
 
             if(!mContext.getResources().getBoolean(R.bool.is_tab_land_)){
@@ -145,40 +128,47 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
         }
         else{
             Log.v("tablet","Phone it is");
-             v = LayoutInflater.from(parent.getContext())
+            v = LayoutInflater.from(parent.getContext())
                     .inflate(layoutId0, parent, false);
 
 
-        }*/
-        View view = LayoutInflater.from( parent.getContext()).inflate(layoutId,  parent, false);
-        view.setFocusable(true);
-        return new cHolder(view);
+        }
+        return new cHolder(v);
     }
 
     @Override
     public void onBindViewHolder(cHolder holder, int position) {
         mCurso.moveToPosition(position);
 
+        holder.company.setText(mCurso.getString(List_recycle.COL_C));
+        holder.position.setText(Html.fromHtml(mCurso.getString(List_recycle.COL_F2)));
+        holder.face.setText(mCurso.getString(List_recycle.COL_F));
+        /*
+         This injectected notification area which is always greater than all values or ids in a given list or Context
+        There is one notification to be loaded and one notificaiton that exist in the server at a specific time\
+        This is automitically deleted as a List notification(the notification within the list)
+        data.DatabaseCrud.class will implement the method thats ads the notification in the database and also implement the
+        method that delete the database notification location.
+        AddNotification and RemoveNotification
+        How does removeNotification function identify the Notificattion to be removed int the List ? well let the Notification id be 100 more thatn the the last entry as always and have extar attribute as always\
+        The extars attribute will be the type or measures the priority i.e priority of ranking [decaprated]
+         * If the priority is
+         *   1 This is the Command to be issued
+         *   2 This is the general list to be added or deleted
+         *   3 This is the ranking attribute
+         *
+         *   Therefore a modified version does not need an extar attributes
+         *   but it only recognises the first number according to the above attribute of ab entyID from the server
+         */
 
-        //holder.face2.setText(mCurso.getString(List_recycle.COL_F2));
-
-        switch (getItemViewType(position)) {
-            case VIEW_NOTIFICATION:
-                holder.noti.setText("Hi msg");
-                break;
-            default:
-                holder.company.setText(mCurso.getString(List_recycle.COL_C));
-                holder.position.setText(Html.fromHtml(mCurso.getString(List_recycle.COL_F2)));
-                holder.face.setText(mCurso.getString(List_recycle.COL_F));
+        if((mCurso.getString(List_recycle.COL_EXTRAS)!=""||mCurso.getString(List_recycle.COL_EXTRAS)!=" ")&&mfront){
+            holder.Title.setVisibility(View.VISIBLE);
+            holder.Title.setText(mCurso.getString(List_recycle.COL_C));
+            holder.Body.setVisibility(View.VISIBLE);
+            holder.Body.setText(mCurso.getString(List_recycle.COL_PO));
         }
 
-
-
-
-
-
-
-
+        //holder.face2.setText(mCurso.getString(List_recycle.COL_F2));
 
     }
 
@@ -190,9 +180,9 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
 
     @Override
     public int getItemViewType(int position) {
-       // return super.getItemViewType(position);
+        // return super.getItemViewType(position);
         //return (position == 0 ) ? 0 : 1;
-        return (position == 0 && mfront  )? VIEW_NOTIFICATION : VIEW_ANY;
+        return position;
     }
 
 

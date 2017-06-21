@@ -32,7 +32,7 @@ public class DatabaseCrud {
         //Secondary Date is obsolete since all entries will depend on one value date thus date will be fetched as singular value and stored in
         //in  SharedPreference key ,thus auto delete will be locally once and for all
         JobValues.put(JobContracts.JobEntry.COLUMN_F, F);
-        JobValues.put(JobContracts.JobEntry.COLUMN_F2,"<b>"+Po+"</b>");
+        JobValues.put(JobContracts.JobEntry.COLUMN_F2,Po);
         JobValues.put(JobContracts.JobEntry.COLUMN_Contacts, Contacts);
         JobValues.put(JobContracts.JobEntry.COLUMN_Email, Email);
         JobValues.put(JobContracts.JobEntry.COLUMN_Extras, Extras);
@@ -50,6 +50,37 @@ public class DatabaseCrud {
         c.getContentResolver().update(JobContracts.JobEntry.BuildJobId(id),JobValues,selection,selectionArgs);
     }
 
+    /**
+     * Removes the Notification in the List
+     * Where Extras is equal to not empty[decapreted]
+     * The new way of working is that the IDentry from the server is is recognised y the first start of the number
+     * Does not receive any parameters since it only deletes the specific
+     * specifics are identified by Extras with 3 value
+     */
+    public static  void removeNotification(Context c){
+
+     //First check if there is already existing notification
+        //if it does exist delete it
+        //else add the new notification
+        c.getContentResolver().delete(JobContracts.JobEntry.CONTENT_URI,
+                JobContracts.JobEntry.COLUMN_Extras + " = ?",
+                new String[]{3+""});
+    }
+
+    /**
+     * Adds the Notification to the List  or replaces an existing Notification
+     *This achieved by adding the first number to the IDentry a 3
+     * @param Title comes as sharepreference first value
+     * @param Body comes as the sharepreference second value
+     */
+    public static  void AddNotification(Context c,String Title,String Body,long last,String P){
+         //First check if there is already existing notification
+        //if it does exist delete it as always by calling the removeNotificvation() before adding it
+        //this function must be called in the end of the queeue to take advantage of the priority with <_ID
+        last=last+1000;
+        ToAaddJobEntry(c,Title,Body,last+"",P,"","","","","",3+"");
+
+    }
 
     /*
     Auto delete funtions is not that specific or savvy ,That is the date in the device may be wrong resulting in all data deleted!
