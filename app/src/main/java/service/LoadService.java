@@ -22,6 +22,7 @@ import java.net.URL;
 import CompontUtils.NotificationUtils;
 
 import data.Data;
+import data.DatabaseCrud;
 import data.JobContracts;
 import global.MyApp;
 
@@ -39,32 +40,43 @@ public class LoadService extends IntentService {
     public static final String TAG = "Loading";
     SharedPreferences sharedPref;
     public boolean server_approval;
+    int big_noti;
+    String LastID;
     public LoadService() {
         super("LoadService");
         server_approval=false;
+        big_noti=0;
+        //LastID="not";
     }
 
 
 
    // public static final String URL_BASE = "http://jobshareapp.jobl.co.za/contentfeeds.php?";
    // public  static final String CV_url="http://192.168.43.27/content.php?";
-     public  static final String URL_BASE="http://192.168.42.149/main/contentfeeds.php?";
+     public  static final String URL_BASE="http://192.168.43.27/JobManagerV1/main/contentfeeds.php?";
 
     String QUERY_PARAM = "q";
     String db;
     SharedPreferences.Editor editor;
+    String db_noti;//holds the current notification id ,make sure the loading of the new noti is current
     @Override
     protected void onHandleIntent(Intent intent) {
+
         sharedPref = getSharedPreferences(
                 Data.PREF_FILE, Context.MODE_PRIVATE);
         db=sharedPref.getString(Data.LAST_ENTRY,"0");
-        Uri builtUri = Uri.parse(URL_BASE).buildUpon().appendQueryParameter(QUERY_PARAM, db).appendQueryParameter("app_ver",sharedPref.getInt(Data.APP_VERSION,0)+"").build();
+        db_noti=sharedPref.getString(Data.KEY_NOTI_NUMBER,"0");
+        Log.v(TAG,db+"shared");
+        big_noti= Integer.parseInt(db);
+        Uri builtUri = Uri.parse(URL_BASE).buildUpon().appendQueryParameter(QUERY_PARAM, db).appendQueryParameter("app_ver",sharedPref.getInt(Data.APP_VERSION,0)+"").appendQueryParameter("noti",db_noti).build();
         try {
             getDataFromJson(loadJsonFromNetworkSecond(builtUri.toString()));
             editor =sharedPref.edit();
             editor.putString(Data.LAST_ENTRY,last_Job_entry(this)+"");
+           // editor.putString(Data.LAST_ENTRY,LastID);
             editor.apply();
-         //sendNotification("Job opportunities have Arrived");
+            Log.v(TAG,LastID+"inner  m"+LastID);
+            //sendNotification("Job opportunities have Arrived");
             new NotificationUtils(this).sendNotification(sharedPref.getString(Data.KEY_NOTI_HEADER,"000/"),sharedPref.getString(Data.KEY_NOTI_BODY,"000/"),server_approval);
         } catch (JSONException e) {
             Log.v("JSON","Failed");
@@ -135,7 +147,7 @@ public class LoadService extends IntentService {
     }
 
     public void getDataFromJson(String JsonStr)throws JSONException
- {
+    {
       try
        {
     Log.v(TAG,JsonStr);
@@ -154,16 +166,11 @@ public class LoadService extends IntentService {
             String e = JArray.getJSONObject(z).getString("e");
             String id = JArray.getJSONObject(z).getString("id");
             String date = JArray.getJSONObject(z).getString("created_at");
-            String extras = JArray.getJSONObject(z).getString("id");
-                   if(Integer.parseInt(id)==Data.notification){
-                  // data.storeNotification(c,po);
-                       editor =sharedPref.edit();
-                       editor.putString(Data.KEY_NOTI_HEADER,c);
-                       editor.putString(Data.KEY_NOTI_BODY,po);
-                       editor.apply();
-                       server_approval=true;
-                   }
-                   ToAaddJobEntry(this,c,po,id,p,date,f,"",n,e,id);
+            String extras = JArray.getJSONObject(z).getString("ex");
+
+                   //LastID=id;
+                   //Log.v(TAG,id+LastID+"idtemp");
+                   ToAaddJobEntry(this,c,po,id,p,date,f,"",n,e,extras);
               }
           }
        }
@@ -179,57 +186,93 @@ catch (JSONException e)
     c.printStackTrace();
   }
 
-//READ THE SECOND PART
+//READ THE SECOND PART :Independent database
         try {
+             DatabaseCrud.removeNotification(this);
          JSONObject Json = new JSONObject(JsonStr);
+            int z=0;
          if(!Json.isNull("noti")) {
              JSONArray JArray = Json.getJSONArray("noti");
-             for(int z=0;z<JArray.length();z++) {
-                 String a = JArray.getJSONObject(z).getString("a");
-                 String b = JArray.getJSONObject(z).getString("b");
-                 String c = JArray.getJSONObject(z).getString("c");
-                 String d = JArray.getJSONObject(z).getString("d");
-                 String e = JArray.getJSONObject(z).getString("e");
-                 long v = (Long.parseLong(e))+ 259200L;
-                // ToAddNotification(this, a, b, c, d, v + "");
-                 // sendNotification(b,a);
+             String c = JArray.getJSONObject(z).getString("c");
+             String po = JArray.getJSONObject(z).getString("po");
+             String p = JArray.getJSONObject(z).getString("p");
+             String f = JArray.getJSONObject(z).getString("face");
+             String n = JArray.getJSONObject(z).getString("n");
+             String e = JArray.getJSONObject(z).getString("e");
+             String id = JArray.getJSONObject(z).getString("id");
+             String date = JArray.getJSONObject(z).getString("created_at");
+             String extras = JArray.getJSONObject(z).getString("ex");
+
+             if(Integer.parseInt(extras)==Data.notification)
+             {
+                 // data.storeNotification(c,po);
+                 editor =sharedPref.edit();
+                 editor.putString(Data.KEY_NOTI_HEADER,c);
+                 editor.putString(Data.KEY_NOTI_BODY,po);
+                 editor.apply();
+                 server_approval=true;
              }
+
+//             ToAaddJobEntry(this,c,po,big_noti+50+"",p,date,f,"",n,e,extras);
+//             Log.v(TAG,big_noti+"bignoti");
+//             Log.v(TAG,big_noti+50+"bignoti+");
+             editor =sharedPref.edit();
+             editor.putString(Data.KEY_NOTI_NUMBER,id+"");
+             editor.apply();
+
          }
-     }catch (JSONException e){
+     }
+     catch (JSONException e){
          Log.e(TAG, e.getMessage(), e);
          e.printStackTrace();
-     }catch (NullPointerException b){
+     }
+     catch (NullPointerException b){
          b.printStackTrace();
      }
+//READ THE Third PART :Independent database
+        try {
+            JSONObject Json = new JSONObject(JsonStr);
+            int z=0;
+            if(!Json.isNull("del")) {
+                JSONArray JArray = Json.getJSONArray("del");
+                String c = JArray.getJSONObject(z).getString("d");
+                DatabaseCrud.ServerDeletes(this, Integer.parseInt(c));
+                Log.v(TAG,c+"delete");
+            }
+        }
+        catch (JSONException e){
+            Log.e(TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+        catch (NullPointerException b){
+            b.printStackTrace();
+        }
 
 
 
- }
+
+    }
 
     public long last_Job_entry(Context c){
         long last =0;
         try {
+          // DatabaseCrud.removeNotification(this);
             String  sortOrder = JobContracts.JobEntry.COLUMN_EntryID  + " DESC";
-            Cursor cursor= c.getContentResolver().query(JobContracts. JobEntry.CONTENT_URI,null,null,null,sortOrder);
-
+            Cursor cursor= c.getContentResolver().query(JobContracts.JobEntry.CONTENT_URI,null,null,null,sortOrder);
             if(cursor!=null){
                 cursor.moveToFirst();
-
                 last =Long.parseLong(cursor.getString(cursor.getColumnIndex(JobContracts.JobEntry.COLUMN_EntryID)));
-
                 Log.v("Last Entry",last+"");
-
                 return last;
-
             }
         }catch (Exception e){
-
             Log.v(TAG,e.toString()+"IS CAUGHT");
             return 0;
         }
-
         return last;
     }
+
+
 
 
 }

@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import CompontUtils.NotificationUtils;
+import data.Data;
+import global.MyApp;
 import service.LoadService;
 
 /**
@@ -24,14 +27,14 @@ public class JobDetails extends AppCompatActivity implements View.OnClickListene
     private FloatingActionButton fab, fab1, fab2;
     private Animation fab_open, fab_close, rotate_forward, rotate_backward;
     NestedScrollView sc;
-
+    Data data;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         // overridePendingTransition(R.anim.fadein,R.anim.fadeout);
         setContentView(R.layout.detail_activity_layout);
-
+        data =((MyApp)getApplication()).getData();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -60,7 +63,7 @@ public class JobDetails extends AppCompatActivity implements View.OnClickListene
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Alarm set", Snackbar.LENGTH_LONG)
-                        .setAction("Alarm settttttt", null).show();
+                        .setAction("Alarm set", null).show();
 
 
                 // Intent Load =new Intent(getApplicationContext(), LoadService.class);
@@ -113,6 +116,8 @@ public class JobDetails extends AppCompatActivity implements View.OnClickListene
                 }
             }
         });
+        data.EditBack(false);//The device is alive
+        NotificationUtils.clearNotificationsID(this,NotificationUtils.NOTIFICATION_ID);
 
     }
 

@@ -237,6 +237,7 @@ public final class NotificationUtils {
 
     public void sendNotification(String msg,String Title,boolean server_approval) {
         SharedPreferences sharedPref = mContext.getSharedPreferences(Data.PREF_FILE, Context.MODE_PRIVATE);
+        //sharedPref.getBoolean(Data.BACK_ENTRY,false);
             mNotificationManager = (NotificationManager)
                     mContext.getSystemService(Context.NOTIFICATION_SERVICE);
             Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -244,24 +245,25 @@ public final class NotificationUtils {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             PendingIntent contentIntent = PendingIntent.getActivity( mContext, 0,
                   intent , 0);
-          if(server_approval) {
-              NotificationCompat.Builder mBuilder =
-                      new NotificationCompat.Builder(mContext)
-                              .setSmallIcon(R.mipmap.ic_launcher)
-                              .setContentTitle(Title)
-                              .setStyle(new NotificationCompat.BigTextStyle()
-                                      .bigText(msg))
-                              .setPriority(NotificationCompat.PRIORITY_HIGH)
-                              .setSound(uri)
-                              //.setOnlyAlertOnce(true)
-                              .setAutoCancel(true)
-                              .setContentText(msg);
-              mBuilder.setContentIntent(contentIntent);
-              mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-              }
-           else{
-          Log.v("Data","OnFRONT");
-               }
+        if(sharedPref.getBoolean(Data.BACK_ENTRY,false)) {
+            if (server_approval) {
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(mContext)
+                                .setSmallIcon(R.mipmap.ic_launcher)
+                                .setContentTitle(Title)
+                                .setStyle(new NotificationCompat.BigTextStyle()
+                                        .bigText(msg))
+                                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                                .setSound(uri)
+                                //.setOnlyAlertOnce(true)
+                                .setAutoCancel(true)
+                                .setContentText(msg);
+                mBuilder.setContentIntent(contentIntent);
+                mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            } else {
+                Log.v("Data", "OnFRONT");
+            }
+        }
 
 
     }

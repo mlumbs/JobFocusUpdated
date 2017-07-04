@@ -45,7 +45,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
 
 
         public cHolder(View view)
-        {super(view);
+        {
+            super(view);
             company=(TextView) view.findViewById(R.id.c);
             position=(TextView) view.findViewById(R.id.po);
             face=(TextView) view.findViewById(R.id.f);
@@ -161,11 +162,15 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
          *   but it only recognises the first number according to the above attribute of ab entyID from the server
          */
 
-        if((mCurso.getString(List_recycle.COL_EXTRAS)!=""||mCurso.getString(List_recycle.COL_EXTRAS)!=" ")&&mfront){
+        if(Integer.parseInt(mCurso.getString(List_recycle.COL_EXTRAS))==3&&mfront){
             holder.Title.setVisibility(View.VISIBLE);
             holder.Title.setText(mCurso.getString(List_recycle.COL_C));
             holder.Body.setVisibility(View.VISIBLE);
             holder.Body.setText(mCurso.getString(List_recycle.COL_PO));
+            holder.company.setVisibility(View.GONE);
+            holder.position.setVisibility(View.GONE);
+            holder.face.setVisibility(View.GONE);
+            holder.face2.setVisibility(View.GONE);
         }
 
         //holder.face2.setText(mCurso.getString(List_recycle.COL_F2));

@@ -97,7 +97,7 @@ public class List_recycle extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-      String sortOrder = JobContracts.JobEntry._ID + " DESC";
+      String sortOrder = JobContracts.JobEntry.COLUMN_EntryID + " DESC";
         return new CursorLoader(getActivity(),
                 JobContracts.JobEntry.CONTENT_URI,
                 JOB_COLUMNS,

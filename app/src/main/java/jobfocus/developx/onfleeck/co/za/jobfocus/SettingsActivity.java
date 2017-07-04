@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+
+import CompontUtils.NotificationUtils;
 import data.Data;
 import global.MyApp;
 
@@ -85,12 +87,15 @@ mNotification.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListe
     protected void onResume() {
 
         super.onResume();
+        data.EditBack(false);//The device is alive
+        NotificationUtils.clearNotificationsID(this,NotificationUtils.NOTIFICATION_ID);
     }
 
     @Override
     protected void onPause() {
 
         super.onPause();
+        data.EditBack(true); //device is not alive
     }
 
 

@@ -27,6 +27,7 @@ public class Data {
     public static final String KEY_FACEBOOK_ID = "face_id"; //Use later for facebook Preferences
     public static final String KEY_NOTI_HEADER = "header"; //this is a String
     public static final String KEY_NOTI_BODY = "body";//this is a String
+    public static final String KEY_NOTI_NUMBER = "number";//this is a value that holds the id of the incrementing notification
     public static final String KEY_TONE_ = "tone"; //This is a boolean to make noise or not
     public static final String KEY_PROMO = "promo"; //This is a promo for office only
     public static final String KEY_SMART_CV_REG = "smartcvreg"; //This is a smart cv entry

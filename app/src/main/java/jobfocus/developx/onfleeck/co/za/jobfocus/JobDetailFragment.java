@@ -101,8 +101,8 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        all = "^Hi /and <bold #italics#adsfs Sometimes there is ^need  XML,  #code #in an Activity  ";
-
+        //all = "^Hi /and <bold #italics#adsfs Sometimes there is ^need XML,#code #in an Activity";
+        all="";
         Bundle arguments = getArguments();
         if (arguments != null) {
             mUri = arguments.getParcelable(JobDetailFragment.DETAIL_URI);
@@ -344,9 +344,9 @@ super.onAttach(activity);
     void addT(int j,int tag){
         StringBuilder b = new StringBuilder();
         char bre ='^';
-        char bre2='#';
-        char bre3='<';
-        char bre4='/';
+        char bre2='$';
+        char bre3='#';
+        char bre4='%';
         for(int i=j+1;i<all.length();i++){
             if(all.charAt(i)==bre||all.charAt(i)==bre2||all.charAt(i)==bre3||all.charAt(i)==bre4)
                 break;
@@ -413,23 +413,23 @@ super.onAttach(activity);
 
         protected void onPostExecute(Cursor data) {
             if (data != null && data.moveToFirst()) {
-                //all=data.getString(COL_p);
+                all=data.getString(COL_p);
 
                 for(int i=0;i<all.length();i++){
                     //System.out.print(all.charAt(i) );
 
                     switch (all.charAt(i)) {
-                        case '^':
+                        case '^': //Header
                             addT(i,0); //0 is Title
                             break;
-                        case '#':
-                            addT(i,1);//1 is List
+                        case '$': //means a paragraph
+                            addT(i,1);
                             break;
-                        case '/':
+                        case '%': //means a list
                             addT(i,2);//2 is Italics
                             break;
-                        case '<':
-                            addT(i,3); //3 is Bold
+                        case '#': //means bold
+                            addT(i,3);
                             break;
                         default:
                             break;

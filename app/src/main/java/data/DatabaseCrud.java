@@ -96,6 +96,13 @@ public class DatabaseCrud {
                 new String[]{Long.toString(System.currentTimeMillis() / 1000L)});
     }
 
+
+    public static void ServerDeletes(Context c,int del){
+        c.getContentResolver().delete(JobContracts.JobEntry.CONTENT_URI,
+                JobContracts.JobEntry.COLUMN_EntryID + " < ?",
+                new String[]{del+""});
+    }
+
     //Write this to a SharedPreference as it will help globalize the updating history
     //returns the last updates
     //should be the last call of the call of service updates after the insert session
@@ -115,7 +122,22 @@ public class DatabaseCrud {
         }
     }
 
+    public static  boolean exist_notification(Context c){
+        String[] mSelectionArgs = {""};
+        mSelectionArgs[0] =3+"";
+        String mSelectionClause = JobContracts.JobEntry.TABLE_NAME + "." + JobContracts.JobEntry.COLUMN_Extras + " = ?";
+        try {
+            Cursor cursor= c.getContentResolver().query(JobContracts. JobEntry.CONTENT_URI,null,mSelectionClause,mSelectionArgs,null);
+            if(cursor==null)
+                return false;
+            else
+                return true;
+        }catch (Exception e){
+            return false;
+        }
 
+
+    }
 
 
 

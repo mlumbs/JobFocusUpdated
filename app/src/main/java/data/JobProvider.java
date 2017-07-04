@@ -162,6 +162,9 @@ public class JobProvider extends ContentProvider {
             case JobWithId:
                 rowsDeleted=db.delete(JobContracts.JobEntry.TABLE_NAME,selection,selectionArgs);
                 break;
+            case jobs:
+                rowsDeleted=db.delete(JobContracts.JobEntry.TABLE_NAME,selection,selectionArgs);
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri"+uri);
         }
