@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "38613292542",
+    "firebase_url": "https://job-share-bf59.firebaseio.com",
+    "project_id": "job-share-bf59",
+    "storage_bucket": "job-share-bf59.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:38613292542:android:4b57d22d6c5c8964",
+        "android_client_info": {
+          "package_name": "jobfocus.developx.onfleeck.co.za.jobfocus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "38613292542-69od18cs94e5ujigbu975iptlmq1tv03.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "38613292542-h9t9ics46nn59meag28i1pcb2vh71bps.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsvbNzsMScSvVwQ_80Utyk3gHJdkrcsws"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
