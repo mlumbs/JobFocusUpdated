@@ -49,12 +49,39 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
     private static final String LOG_TAG = JobDetailFragment.class.getSimpleName();
     static final String DETAIL_URI = "URI";
     WebView WebView;
-
+    NestedScrollView sc;
 
     private String mDetail="The link is broken";
 
     private Uri mUri;
-
+     String data0 = "<head><title>Hello World</title>";
+    String style="<style>\n" +
+            ".col-sm-5 {\n" +
+            "    width: 41.6667%;\n" +
+            "}\n" +
+            ".form-control {\n" +
+            "  display: block;\n" +
+            "  width: 100%;\n" +
+            "  height: 34px;\n" +
+            "  padding: 6px 12px;\n" +
+            "  font-size: 14px;\n" +
+            "  line-height: 1.42857143;\n" +
+            "  color: #555;\n" +
+            "  background-color: #fff;\n" +
+            "  background-image: none;\n" +
+            "  border: 1px solid #ccc;\n" +
+            "  border-radius: 4px;\n" +
+            "  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n" +
+            "          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n" +
+            "  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;\n" +
+            "}\n" +
+            "</style>";
+    String viewport ="<meta name=\"viewport\" content=\"width=device-width, user-scalable=no\" />";
+    String forms ="<form class=\"col-sm-5\">\n" +
+            "<input class=\"form-control\" type=\"text\" name=\"firstname\" placeholder=\"First name\">\n" +
+            "<br>\n" +
+            "<input class=\"form-control\" type=\"text\" name=\"lastname\" placeholder=\"First name\">\n" +
+            "</form> ";
     private static final int DETAIL_LOADER = 0;
 
     private static final String[] DETAIL_COLUMNS = {
@@ -98,6 +125,12 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
     public JobDetailFragment() {
         setHasOptionsMenu(true);
     }
+    public interface Callback {
+        /**
+         * DetailFragmentCallback for when an item has been selected.
+         */
+        public void onItemSelected(Uri dateUri);
+    }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -107,20 +140,35 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
         if (arguments != null) {
             mUri = arguments.getParcelable(JobDetailFragment.DETAIL_URI);
         }
+        data0 += viewport+style+"</head>";
+        data0 += "<body>"+forms+"</body>";
 
 
         View rootView = inflater.inflate(R.layout.jobdetail_layout,
                 container, false);
 
-        mContainerView = (ViewGroup) rootView.findViewById(R.id.container);
+      // mContainerView = (ViewGroup) rootView.findViewById(R.id.container);
 
         new UIbuilder().execute(mUri);
         //new DownloadFilesTask().execute(url1, url2, url3);
 
+        data0 += "<body>"+"</body>";
+        data0 += "</html>";
 
 
+        sc = (NestedScrollView) rootView.findViewById(R.id.sc);
+        sc.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
 
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                //Toast.makeText(getApplication(),"sents", Toast.LENGTH_SHORT).show();
 
+                if ((((JobDetails)getActivity()).getStatus())){
+                   ;
+                    ((JobDetails)getActivity()).hideFAB();
+                }
+            }
+        });
 //
 //        FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fabshare);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +190,7 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
         // EX = (TextView) rootView.findViewById(R.id.ex);
 
                 //or
-         //WebView = (WebView) rootView.findViewById(R.id.webview);
+         WebView = (WebView) rootView.findViewById(R.id.webview);
 
 
         return rootView;
@@ -201,34 +249,9 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
             //CO.setText(Html.fromHtml(data.getString(COL_contacts)));
            // EX.setText(Html.fromHtml(data.getString(COL_extras)));
                           //or
-            String style="<style>\n" +
-                    ".col-sm-5 {\n" +
-                    "    width: 41.6667%;\n" +
-                    "}\n" +
-                    ".form-control {\n" +
-                    "  display: block;\n" +
-                    "  width: 100%;\n" +
-                    "  height: 34px;\n" +
-                    "  padding: 6px 12px;\n" +
-                    "  font-size: 14px;\n" +
-                    "  line-height: 1.42857143;\n" +
-                    "  color: #555;\n" +
-                    "  background-color: #fff;\n" +
-                    "  background-image: none;\n" +
-                    "  border: 1px solid #ccc;\n" +
-                    "  border-radius: 4px;\n" +
-                    "  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n" +
-                    "          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);\n" +
-                    "  -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;\n" +
-                    "}\n" +
-                    "</style>";
 
-            String viewport ="<meta name=\"viewport\" content=\"width=device-width, user-scalable=no\" />";
-String forms ="<form class=\"col-sm-5\">\n" +
-        "<input class=\"form-control\" type=\"text\" name=\"firstname\" placeholder=\"First name\">\n" +
-        "<br>\n" +
-        "<input class=\"form-control\" type=\"text\" name=\"lastname\" placeholder=\"First name\">\n" +
-        "</form> ";
+
+
 
            // WebView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
 //            String body_content=data.getString(COL_p);
@@ -294,24 +317,6 @@ super.onAttach(activity);
     }
 
 
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        switch (id){
-            case R.id.fab:
-
-                animateFAB();
-                break;
-            case R.id.fab1:
-
-                Log.d("Raj", "Fab 1");
-                break;
-            case R.id.fab2:
-
-                Log.d("Raj", "Fab 2");
-                break;
-        }
-    }
 
 
     public void animateFAB(){
@@ -394,7 +399,13 @@ super.onAttach(activity);
 
 
     }
-     class UIbuilder extends AsyncTask<Uri, Void,Cursor> {
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    class UIbuilder extends AsyncTask<Uri, Void,Cursor> {
         //SQLiteDatabase db = mDbHelper.getReadableDatabase();
         protected Cursor doInBackground(Uri... id) {
             if ( null != mUri ) {
@@ -414,27 +425,29 @@ super.onAttach(activity);
         protected void onPostExecute(Cursor data) {
             if (data != null && data.moveToFirst()) {
                 all=data.getString(COL_p);
+                data0+=all;
+                WebView.loadData(data0, "text/html", "UTF-8");
 
-                for(int i=0;i<all.length();i++){
-                    //System.out.print(all.charAt(i) );
-
-                    switch (all.charAt(i)) {
-                        case '^': //Header
-                            addT(i,0); //0 is Title
-                            break;
-                        case '$': //means a paragraph
-                            addT(i,1);
-                            break;
-                        case '%': //means a list
-                            addT(i,2);//2 is Italics
-                            break;
-                        case '#': //means bold
-                            addT(i,3);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+//                for(int i=0;i<all.length();i++){
+//                    //System.out.print(all.charAt(i) );
+//
+//                    switch (all.charAt(i)) {
+//                        case '^': //Header
+//                            addT(i,0); //0 is Title
+//                            break;
+//                        case '$': //means a paragraph
+//                            addT(i,1);
+//                            break;
+//                        case '%': //means a list
+//                            addT(i,2);//2 is Italics
+//                            break;
+//                        case '#': //means bold
+//                            addT(i,3);
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//                }
 
 
 

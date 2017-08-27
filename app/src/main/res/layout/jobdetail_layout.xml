@@ -4,97 +4,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-
+<!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical"-->
+    <!--&gt;-->
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/sc"
+        android:layout_marginTop="?attr/actionBarSize"
         >
 
-            <!--The Head-->
-
-
-                <LinearLayout
-                    style="@style/Widget.CardContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:id="@+id/container"
-                    android:paddingLeft="16dp"
-                    android:paddingStart="16dp"
-
-                    >
-
-                    <!--<TextView-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/c"-->
-
-                        <!--android:textColor="#ff0099cc"-->
-                        <!--android:textAppearance="@style/TextAppearance.AppCompat.Headline"-->
-                        <!--android:gravity="center" />-->
-
-
-
-                    <!--<TextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/p"-->
-
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:textAppearance="?android:textAppearanceMedium"-->
-
-                        <!--/>-->
-
-
-                    <!--<TextView-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/po"-->
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body1" />-->
-
-                    <!--<WebView  xmlns:android="http://schemas.android.com/apk/res/android"-->
-                        <!--android:id="@+id/webview"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--/>-->
-
-                    <!--<TextView-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/contacts"-->
-                        <!--android:gravity="center"-->
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:textAppearance="?android:textAppearanceMedium" />-->
-
-                    <!--<TextView-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/e"-->
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body1" />-->
-                    <!--<TextView-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/ex"-->
-                        <!--android:paddingBottom="8dp"-->
-                        <!--android:textAppearance="@style/TextAppearance.AppCompat.Body1" />-->
-
-
-                </LinearLayout>
-
-
-
-
-
+                    <WebView  xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:id="@+id/webview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
 
     </android.support.v4.widget.NestedScrollView>
-
-
-
-
+<!--</LinearLayout>-->
 </android.support.design.widget.CoordinatorLayout>

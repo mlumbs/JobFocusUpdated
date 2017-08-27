@@ -32,6 +32,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
     FragmentManager fragmentManager;
     CustomDialogFragment newFragment ;
     Boolean istab;
+    public final static String EXTRA_MESSAGE = "jobfocus.developx.onfleeck.co.za.jobfocus.EXTRA";
+
     private boolean mfront;
     public class cHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -63,6 +65,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
             mCurso.moveToPosition(adapter_posotion);
             int ID_CULUMN_INDEX = mCurso.getColumnIndex(JobContracts.JobEntry._ID);
             int p = mCurso.getInt(ID_CULUMN_INDEX);
+            String link= mCurso.getString(JobDetailFragment.COL_entryid);
+
             if(mContext.getResources().getBoolean(R.bool.is_tab_)){
                 Bundle arguments = new Bundle();
                 arguments.putParcelable(CustomDialogFragment.DETAIL_URI_TAB,JobContracts.JobEntry.BuildJobId(p+""));
@@ -75,7 +79,9 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
 
             }else {
                 Intent intent = new Intent(mContext, JobDetails.class)
-                        .setData(JobContracts.JobEntry.BuildJobId(p+""));
+                        .setData(JobContracts.JobEntry.BuildJobId(p+""))
+                         .putExtra(EXTRA_MESSAGE,link);
+
                 mContext.startActivity(intent);
             }
 

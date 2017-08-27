@@ -51,14 +51,16 @@ public class LoadService extends IntentService {
 
 
 
-   // public static final String URL_BASE = "http://jobshareapp.jobl.co.za/contentfeeds.php?";
-   // public  static final String CV_url="http://192.168.43.27/content.php?";
-     public  static final String URL_BASE="http://192.168.43.27/JobManagerV1/main/contentfeeds.php?";
+    // public static final String URL_BASE = "http://jobshareapp.jobl.co.za/contentfeeds.php?";
+    // public  static final String CV_url="http://192.168.43.27/content.php?";
+    public  static final String URL_BASE="http://jobshareapp.jobl.co.za/JobManagerV2/main/contentfeeds.php?";
 
     String QUERY_PARAM = "q";
     String db;
     SharedPreferences.Editor editor;
     String db_noti;//holds the current notification id ,make sure the loading of the new noti is current
+
+  //  String JsonDe="{\"entries\":[{\"c\":\" abc\",\"face\":\" abc\",\"po\":\" abc\",\"p\":\"       <ul style=\\\"list-style-type:square\\\" id=\\\"myList\\\">       <li>saa<\\/li><\\/ul>       <h4 style=\\\"text-align: center;\\\">as<\\/h4><p>as<\\/p>\",\"e\":\" ass\",\"n\":\" assas\",\"ex\":\"2\",\"id\":\"39\",\"created_at\":\"2017-08-12 21:13:54\"}],\"noti\":[{\"c\":\"gdfd\",\"face\":\"\",\"po\":\" dfsd\",\"p\":\"\",\"e\":\"\",\"n\":\"\",\"ex\":\"3\",\"id\":\"1\",\"created_at\":\"2017-08-13 10:34:18\"}]}";
     @Override
     protected void onHandleIntent(Intent intent) {
 
@@ -71,9 +73,10 @@ public class LoadService extends IntentService {
         Uri builtUri = Uri.parse(URL_BASE).buildUpon().appendQueryParameter(QUERY_PARAM, db).appendQueryParameter("app_ver",sharedPref.getInt(Data.APP_VERSION,0)+"").appendQueryParameter("noti",db_noti).build();
         try {
             getDataFromJson(loadJsonFromNetworkSecond(builtUri.toString()));
+            //getDataFromJson(JsonDe);
             editor =sharedPref.edit();
             editor.putString(Data.LAST_ENTRY,last_Job_entry(this)+"");
-           // editor.putString(Data.LAST_ENTRY,LastID);
+            // editor.putString(Data.LAST_ENTRY,LastID);
             editor.apply();
             Log.v(TAG,LastID+"inner  m"+LastID);
             //sendNotification("Job opportunities have Arrived");
@@ -103,7 +106,7 @@ public class LoadService extends IntentService {
             urlConnection.setRequestMethod("GET");
             urlConnection.connect();
 
-          // Read the input stream into a String
+            // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
             StringBuffer buffer = new StringBuffer();
 
@@ -148,87 +151,87 @@ public class LoadService extends IntentService {
 
     public void getDataFromJson(String JsonStr)throws JSONException
     {
-      try
-       {
-    Log.v(TAG,JsonStr);
-    JSONObject Json = new JSONObject(JsonStr);
-          if(!Json.isNull("entries"))
-          {
-        Log.v(TAG, "This is not null");
-        JSONArray JArray = Json.getJSONArray("entries");//This return null if network is unavailable
-        for (int z = 0; z < JArray.length(); z++)
-               {
-            String c = JArray.getJSONObject(z).getString("c");
-            String po = JArray.getJSONObject(z).getString("po");
-            String p = JArray.getJSONObject(z).getString("p");
-            String f = JArray.getJSONObject(z).getString("face");
-            String n = JArray.getJSONObject(z).getString("n");
-            String e = JArray.getJSONObject(z).getString("e");
-            String id = JArray.getJSONObject(z).getString("id");
-            String date = JArray.getJSONObject(z).getString("created_at");
-            String extras = JArray.getJSONObject(z).getString("ex");
+        try
+        {
+            Log.v(TAG,JsonStr);
+            JSONObject Json = new JSONObject(JsonStr);
+            if(!Json.isNull("entries"))
+            {
+                Log.v(TAG, "This is not null");
+                JSONArray JArray = Json.getJSONArray("entries");//This return null if network is unavailable
+                for (int z = 0; z < JArray.length(); z++)
+                {
+                    String c = JArray.getJSONObject(z).getString("c");
+                    String po = JArray.getJSONObject(z).getString("po");
+                    String p = JArray.getJSONObject(z).getString("p");
+                    String f = JArray.getJSONObject(z).getString("face");
+                    String n = JArray.getJSONObject(z).getString("n");
+                    String e = JArray.getJSONObject(z).getString("e");
+                    String id = JArray.getJSONObject(z).getString("id");
+                    String date = JArray.getJSONObject(z).getString("created_at");
+                    String extras = JArray.getJSONObject(z).getString("ex");
 
-                   //LastID=id;
-                   //Log.v(TAG,id+LastID+"idtemp");
-                   ToAaddJobEntry(this,c,po,id,p,date,f,"",n,e,extras);
-              }
-          }
-       }
-catch (JSONException e)
-  {
-    Log.e(TAG, e.getMessage(), e);
-    e.printStackTrace();
-  } catch (NullPointerException b)
-  {
-    b.printStackTrace();
-  }catch (Exception c)
-  {
-    c.printStackTrace();
-  }
+                    //LastID=id;
+                    //Log.v(TAG,id+LastID+"idtemp");
+                    ToAaddJobEntry(this,c,po,id,p,date,f,"",n,e,extras);
+                }
+            }
+        }
+        catch (JSONException e)
+        {
+            Log.e(TAG, e.getMessage(), e);
+            e.printStackTrace();
+        } catch (NullPointerException b)
+        {
+            b.printStackTrace();
+        }catch (Exception c)
+        {
+            c.printStackTrace();
+        }
 
 //READ THE SECOND PART :Independent database
         try {
-             DatabaseCrud.removeNotification(this);
-         JSONObject Json = new JSONObject(JsonStr);
+            DatabaseCrud.removeNotification(this);
+            JSONObject Json = new JSONObject(JsonStr);
             int z=0;
-         if(!Json.isNull("noti")) {
-             JSONArray JArray = Json.getJSONArray("noti");
-             String c = JArray.getJSONObject(z).getString("c");
-             String po = JArray.getJSONObject(z).getString("po");
-             String p = JArray.getJSONObject(z).getString("p");
-             String f = JArray.getJSONObject(z).getString("face");
-             String n = JArray.getJSONObject(z).getString("n");
-             String e = JArray.getJSONObject(z).getString("e");
-             String id = JArray.getJSONObject(z).getString("id");
-             String date = JArray.getJSONObject(z).getString("created_at");
-             String extras = JArray.getJSONObject(z).getString("ex");
+            if(!Json.isNull("noti")) {
+                JSONArray JArray = Json.getJSONArray("noti");
+                String c = JArray.getJSONObject(z).getString("c");
+                String po = JArray.getJSONObject(z).getString("po");
+                String p = JArray.getJSONObject(z).getString("p");
+                String f = JArray.getJSONObject(z).getString("face");
+                String n = JArray.getJSONObject(z).getString("n");
+                String e = JArray.getJSONObject(z).getString("e");
+                String id = JArray.getJSONObject(z).getString("id");
+                String date = JArray.getJSONObject(z).getString("created_at");
+                String extras = JArray.getJSONObject(z).getString("ex");
 
-             if(Integer.parseInt(extras)==Data.notification)
-             {
-                 // data.storeNotification(c,po);
-                 editor =sharedPref.edit();
-                 editor.putString(Data.KEY_NOTI_HEADER,c);
-                 editor.putString(Data.KEY_NOTI_BODY,po);
-                 editor.apply();
-                 server_approval=true;
-             }
+                if(Integer.parseInt(extras)==Data.notification)
+                {
+                    // data.storeNotification(c,po);
+                    editor =sharedPref.edit();
+                    editor.putString(Data.KEY_NOTI_HEADER,c);
+                    editor.putString(Data.KEY_NOTI_BODY,po);
+                    editor.apply();
+                    server_approval=true;
+                }
 
 //             ToAaddJobEntry(this,c,po,big_noti+50+"",p,date,f,"",n,e,extras);
 //             Log.v(TAG,big_noti+"bignoti");
 //             Log.v(TAG,big_noti+50+"bignoti+");
-             editor =sharedPref.edit();
-             editor.putString(Data.KEY_NOTI_NUMBER,id+"");
-             editor.apply();
+                editor =sharedPref.edit();
+                editor.putString(Data.KEY_NOTI_NUMBER,id+"");
+                editor.apply();
 
-         }
-     }
-     catch (JSONException e){
-         Log.e(TAG, e.getMessage(), e);
-         e.printStackTrace();
-     }
-     catch (NullPointerException b){
-         b.printStackTrace();
-     }
+            }
+        }
+        catch (JSONException e){
+            Log.e(TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+        catch (NullPointerException b){
+            b.printStackTrace();
+        }
 //READ THE Third PART :Independent database
         try {
             JSONObject Json = new JSONObject(JsonStr);
@@ -256,7 +259,7 @@ catch (JSONException e)
     public long last_Job_entry(Context c){
         long last =0;
         try {
-          // DatabaseCrud.removeNotification(this);
+            // DatabaseCrud.removeNotification(this);
             String  sortOrder = JobContracts.JobEntry.COLUMN_EntryID  + " DESC";
             Cursor cursor= c.getContentResolver().query(JobContracts.JobEntry.CONTENT_URI,null,null,null,sortOrder);
             if(cursor!=null){
