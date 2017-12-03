@@ -33,6 +33,7 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
     CustomDialogFragment newFragment ;
     Boolean istab;
     public final static String EXTRA_MESSAGE = "jobfocus.developx.onfleeck.co.za.jobfocus.EXTRA";
+    public final static String EXTRA_MESSAGE_TITLE = "jobfocus.developx.onfleeck.co.za.jobfocus.EXTRA__TITLE";
 
     private boolean mfront;
     public class cHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -66,10 +67,13 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
             int ID_CULUMN_INDEX = mCurso.getColumnIndex(JobContracts.JobEntry._ID);
             int p = mCurso.getInt(ID_CULUMN_INDEX);
             String link= mCurso.getString(JobDetailFragment.COL_entryid);
+            String title= mCurso.getString(List_recycle.COL_C);
 
             if(mContext.getResources().getBoolean(R.bool.is_tab_)){
                 Bundle arguments = new Bundle();
                 arguments.putParcelable(CustomDialogFragment.DETAIL_URI_TAB,JobContracts.JobEntry.BuildJobId(p+""));
+                arguments.putString(EXTRA_MESSAGE,link);
+                arguments.putString(EXTRA_MESSAGE_TITLE,title);
                 try {
                     newFragment.setArguments(arguments);
                     newFragment.show(fragmentManager, "dialog");
@@ -80,7 +84,8 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
             }else {
                 Intent intent = new Intent(mContext, JobDetails.class)
                         .setData(JobContracts.JobEntry.BuildJobId(p+""))
-                         .putExtra(EXTRA_MESSAGE,link);
+                         .putExtra(EXTRA_MESSAGE,link)
+                         .putExtra(EXTRA_MESSAGE_TITLE,title);
 
                 mContext.startActivity(intent);
             }
@@ -119,8 +124,6 @@ public class JobAdapter extends RecyclerView.Adapter<JobAdapter.cHolder> {
                 v = LayoutInflater.from(parent.getContext())
                         .inflate(layoutId1, parent, false);
                 v.setFocusable(true);
-
-
 
             }
             else{

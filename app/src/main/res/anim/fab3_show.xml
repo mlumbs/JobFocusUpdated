@@ -2,7 +2,7 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillAfter="true">
 
-    <!-- Rotate -->
+    <!-- Rotate
     <rotate
         android:duration="500"
         android:fromDegrees="30"
@@ -13,7 +13,7 @@
         android:repeatMode="reverse"
         android:toDegrees="0"></rotate>
 
-    <!--Move-->
+    Move-->
     <translate
         android:duration="1000"
         android:fromXDelta="25%"

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import debugging.Logs;
 import jobfocus.developx.onfleeck.co.za.jobfocus.AlarmReceiver;
 
 /**
@@ -15,7 +16,10 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED"))
         {
+
             alarm.setAlarm(context);
+            Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),"Set alarm after reboot");
+
         }
     }
 }

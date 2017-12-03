@@ -10,4 +10,21 @@
     <!--<string name="old" translatable="false">jobfocus.developx.onfleeck.co.za.jobfocus_old</string>-->
    <string name="key" translatable="false">jobfocus.developx.onfleeck.co.za.jobfocus_key</string>
 
+    <!--This is for facebook-->
+    <string name="FACEBOOK_APP_ID">457449614610441</string>
+    <!--<string name="ACCOUNT_KIT_CLIENT_TOKEN">bed5a6b7c8d</string>-->
+    <!--<string name="ak_login_protocol_scheme">ak1234</string>-->
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="login_email_label">Login with Email</string>
+    <string name="login_phone_label">Login with Phone Number</string>
+    <string name="account">Account</string>
+    <string name="id_label">Account ID</string>
+    <string name="phone_label">Phone Number</string>
+    <string name="email_label">Email</string>
+    <string name="name_label">Name</string>
+    <string name="logout_label">Log In/Log Out</string>
+
+
+
+
 </resources>

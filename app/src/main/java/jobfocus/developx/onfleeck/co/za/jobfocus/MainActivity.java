@@ -1,6 +1,7 @@
 package jobfocus.developx.onfleeck.co.za.jobfocus;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
@@ -14,15 +15,36 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+
+import com.facebook.AccessToken;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
+
+import java.util.Locale;
+
 import CompontUtils.NotificationUtils;
 import data.Data;
 import global.MyApp;
 import service.LoadService;
 
+import com.makeramen.roundedimageview.RoundedTransformationBuilder;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Data data;
-    AlarmReceiver alarm =new AlarmReceiver();
+
+    ProfileTracker profileTracker;
+    ImageView profilePic;
+    TextView id;
+    TextView infoLabel;
+    TextView info;
+
     //public static final String URL_BASE = "http://i6oigle.co.za/entryq.php?";
     //Uri builtUri = Uri.parse(URL_BASE).buildUpon().appendQueryParameter("q", Long.toString(0)).appendQueryParameter("n",Long.toString(0)).build();
     @Override
@@ -30,6 +52,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         data =((MyApp)getApplication()).getData();
+
+
         //Initiate the App instances(Singleton) if it does not exist
        // data.storeEntry("800");//Store this in a Preference Automatically
 
@@ -43,7 +67,7 @@ public class MainActivity extends AppCompatActivity
         collapsingToolbar.setTitle(" ");
         //collapsingToolbar.setCollapsedTitleGravity(2);
         Log.v("Tracking Data singleton", Data.track_objects+"");
-       // alarm.setAlarm(getApplicationContext());
+       //
 
 
         Bundle front =new Bundle();
@@ -65,6 +89,42 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+
+
+//        Facebook
+//
+
+        profilePic = (ImageView) header.findViewById(R.id.profile_image);
+        id = (TextView) header.findViewById(R.id.id);
+        infoLabel = (TextView) header.findViewById(R.id.info_label);
+        info = (TextView) header.findViewById(R.id.info);
+        FontHelper.setCustomTypeface(header.findViewById(R.id.view_root));// Facebook
+        // register a receiver for the onCurrentProfileChanged event
+        profileTracker = new ProfileTracker() {
+            @Override
+            protected void onCurrentProfileChanged (Profile oldProfile, Profile currentProfile) {
+                if (currentProfile != null) {
+                    displayProfileInfo(currentProfile);
+                }
+            }
+        };
+
+        if (AccessToken.getCurrentAccessToken() != null) {
+            // If there is an access token then Login Button was used
+            // Check if the profile has already been fetched
+            Profile currentProfile = Profile.getCurrentProfile();
+            if (currentProfile != null) {
+                displayProfileInfo(currentProfile);
+            }
+            else {
+                // Fetch the profile, which will trigger the onCurrentProfileChanged receiver
+                Profile.fetchProfileForCurrentAccessToken();
+            }
+        }
+
+
+
     }
 
     @Override
@@ -117,19 +177,6 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_notification) {
             // Handle the camera action
         }
-//        else if (id == R.id.nav_gallery) {
-//
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
-//
-//        }
-//        else if (id == R.id.nav_share) {
-//
-//        } else if (id == R.id.nav_send) {
-//
-//        }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -144,10 +191,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-
-
     }
-
 
     @Override
     protected void onResume() {
@@ -162,6 +206,54 @@ public class MainActivity extends AppCompatActivity
         data.EditBack(true); //device is not alive
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // unregister the profile tracker receiver
+        profileTracker.stopTracking();
+    }
+    public void onLogout(View view) {
+
+        // logout of Login Button
+        LoginManager.getInstance().logOut();
+
+        launchLoginActivity();
+    }
+
+    private void displayProfileInfo(Profile profile) {
+        Log.v("Facebook",profile.getName()+" id "+profile.getId());
+        // get Profile ID
+        String profileId = profile.getId();
+        id.setText(profileId);
+
+        //display the Profile name
+        String name = profile.getName();
+       info.setText(name);
+       infoLabel.setText(R.string.name_label);
+        // display the profile picture
+        Uri profilePicUri = profile.getProfilePictureUri(100, 100);
+        displayProfilePic(profilePicUri);
+    }
+
+    private void launchLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+    private void displayProfilePic(Uri uri) {
+        // helper method to load the profile pic in a circular imageview
+        Transformation transformation = new RoundedTransformationBuilder()
+                .cornerRadiusDp(30)
+                .oval(false)
+                .build();
+        Picasso.with(MainActivity.this)
+                .load(uri)
+                .transform(transformation)
+                .into(profilePic);
+    }
 
 
 }

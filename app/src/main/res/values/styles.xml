@@ -44,4 +44,15 @@
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
+    <!--This for facebook-->
+
+
+    <style name="FullscreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+
+
+
+
 </resources>

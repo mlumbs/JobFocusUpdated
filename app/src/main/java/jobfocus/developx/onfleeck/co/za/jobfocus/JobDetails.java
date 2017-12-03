@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
@@ -58,6 +59,7 @@ public class JobDetails extends AppCompatActivity  {
 
         super.onCreate(savedInstanceState);
         // overridePendingTransition(R.anim.fadein,R.anim.fadeout);
+        getWindow().requestFeature(Window.FEATURE_PROGRESS);
         setContentView(R.layout.detail_activity_layout);
         FAB_Status = false;
         data =((MyApp)getApplication()).getData();
@@ -65,8 +67,10 @@ public class JobDetails extends AppCompatActivity  {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         mDetail = intent.getStringExtra(JobAdapter.EXTRA_MESSAGE);
+        toolbar.setTitle( intent.getStringExtra(JobAdapter.EXTRA_MESSAGE_TITLE));
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
             arguments.putParcelable(JobDetailFragment.DETAIL_URI, getIntent().getData());
@@ -111,9 +115,12 @@ public class JobDetails extends AppCompatActivity  {
                 }
             }
         });
-        fab1.setOnClickListener(new View.OnClickListener() {
+        fab3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+
+
                 Intent send =new Intent();
                 send.setAction(Intent.ACTION_SEND);
                 send.putExtra(Intent.EXTRA_TEXT, a_id+mDetail );
@@ -121,6 +128,10 @@ public class JobDetails extends AppCompatActivity  {
                 send.setPackage("com.whatsapp");
                 // startActivity(send);
                 startActivityForResult(send,SEND_REQUEST);
+            }catch (Exception n){
+                    Snackbar.make(v, "Application not Found", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
 
@@ -129,20 +140,29 @@ public class JobDetails extends AppCompatActivity  {
             public void onClick(View v) {
 
                 Intent send =new Intent();
-                send.setAction(Intent.ACTION_VIEW);
+                send.setAction(Intent.ACTION_SEND);
                 send.putExtra("sms_body", a_id+mDetail);
                 send.setType("vnd.android-dir/mms-sms");
                 startActivityForResult(send,SEND_REQUEST);
             }
         });
 
-        fab3.setOnClickListener(new View.OnClickListener() {
+        fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent send =new Intent();
-                send.setAction(Intent.ACTION_VIEW);
-                startActivityForResult(send,SEND_REQUEST);
+                send.setAction(Intent.ACTION_SEND);
+                send.putExtra(Intent.EXTRA_TEXT, a_id+mDetail);
+                send.setType("text/plain");
+               // startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
+                startActivityForResult(send.createChooser(send,"Share this post with"),SEND_REQUEST);
+//                Intent send =new Intent();
+//                send.setAction (Intent.ACTION_SEND);
+//                send.putExtra(Intent.EXTRA_TEXT,mDetail);
+//                send.setType("text/plain");
+//                startActivity(send);
+
             }
         });
 
@@ -153,6 +173,10 @@ public class JobDetails extends AppCompatActivity  {
     public boolean getStatus(){
         return FAB_Status;
     }
+    public void setStatus(boolean tr){
+        FAB_Status=tr;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to

@@ -24,6 +24,7 @@ import CompontUtils.NotificationUtils;
 import data.Data;
 import data.DatabaseCrud;
 import data.JobContracts;
+import debugging.Logs;
 import global.MyApp;
 
 import static data.DatabaseCrud.ToAaddJobEntry;
@@ -53,17 +54,16 @@ public class LoadService extends IntentService {
 
     // public static final String URL_BASE = "http://jobshareapp.jobl.co.za/contentfeeds.php?";
     // public  static final String CV_url="http://192.168.43.27/content.php?";
-    public  static final String URL_BASE="http://jobshareapp.jobl.co.za/JobManagerV2/main/contentfeeds.php?";
-
+   // public  static final String URL_BASE="http://jobshareapp.jobl.co.za/JobManagerV2/main/contentfeeds.php?"; //Real
+    public  static final String URL_BASE="http://192.168.56.1:8080/JobManagerV2/main/contentfeeds.php?";
     String QUERY_PARAM = "q";
     String db;
     SharedPreferences.Editor editor;
     String db_noti;//holds the current notification id ,make sure the loading of the new noti is current
 
-  //  String JsonDe="{\"entries\":[{\"c\":\" abc\",\"face\":\" abc\",\"po\":\" abc\",\"p\":\"       <ul style=\\\"list-style-type:square\\\" id=\\\"myList\\\">       <li>saa<\\/li><\\/ul>       <h4 style=\\\"text-align: center;\\\">as<\\/h4><p>as<\\/p>\",\"e\":\" ass\",\"n\":\" assas\",\"ex\":\"2\",\"id\":\"39\",\"created_at\":\"2017-08-12 21:13:54\"}],\"noti\":[{\"c\":\"gdfd\",\"face\":\"\",\"po\":\" dfsd\",\"p\":\"\",\"e\":\"\",\"n\":\"\",\"ex\":\"3\",\"id\":\"1\",\"created_at\":\"2017-08-13 10:34:18\"}]}";
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),"Service start process");
         sharedPref = getSharedPreferences(
                 Data.PREF_FILE, Context.MODE_PRIVATE);
         db=sharedPref.getString(Data.LAST_ENTRY,"0");
@@ -91,6 +91,7 @@ public class LoadService extends IntentService {
         catch (NullPointerException e) {
             Log.v(TAG,"Network is absent");
         }
+        Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),"Service done processing");
 
     }
 

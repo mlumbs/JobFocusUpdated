@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -63,14 +64,18 @@ public class List_recycle extends Fragment implements LoaderManager.LoaderCallba
         front= getArguments().getBoolean("fr");
         View rootView = inflater.inflate(R.layout.list_recycle_feed,
                 container, false);
-
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.lrecycler_view);
+        RecyclerView.LayoutManager mLayoutManager;
         if(getResources().getBoolean(R.bool.is_tab_)){
             LinearLayout r =(LinearLayout)rootView.findViewById(R.id.list_recycled_feed);
             r.setBackgroundColor(getResources().getColor(R.color.color_tab));
-        }
-        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.lrecycler_view);
+            mLayoutManager = new GridLayoutManager(getActivity(),2);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        }else {
+            mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+
+        }
+
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new JobAdapter(getContext(),front);
         mRecyclerView.setAdapter(mAdapter);

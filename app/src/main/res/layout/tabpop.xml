@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sc"
-    android:layout_width="608dp"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     style="@style/m">
     <!--android:background="@drawable/webbg"-->
-       <FrameLayout
-           android:layout_width="602dp"
-           android:layout_height="match_parent"
 
-           >
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/colorPrimary"
+        android:src="@android:drawable/ic_menu_share"
+        app:layout_behavior="jobfocus.developx.onfleeck.co.za.jobfocus.Scrolling_Floating_Action_Button.FAB_Float_on_Scroll"
+        />
+
+    <FrameLayout
+        android:layout_width="502dp"
+        android:layout_height="match_parent"
+
+        >
 
         <WebView
             android:id="@+id/webview"
@@ -24,31 +36,32 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="top|start"
-            android:background="#000000"
-            android:orientation="horizontal"
-            >
-            <Button
-                android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@drawable/c"
-                    android:onClick="Dismiss"
-                android:layout_margin="8dp"
-                    />
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal">
 
             <Button
+                android:id="@+id/button2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:background="@drawable/s"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginRight="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_margin="8dp"
-                 />
+                android:background="@drawable/c"
+                android:onClick="Dismiss" />
+
+            <TextView
+                android:id="@+id/pop_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:textColor="#FFFFFF"
+                android:layout_toEndOf="@+id/button2"
+                android:layout_toRightOf="@+id/button2"
+                android:text="Job Detail"
+                android:textSize="20sp" />
         </RelativeLayout>
 
-       </FrameLayout>
+    </FrameLayout>
 
 
-
-</android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

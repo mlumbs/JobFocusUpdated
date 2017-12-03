@@ -1,5 +1,6 @@
 package jobfocus.developx.onfleeck.co.za.jobfocus;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,24 +10,31 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import data.DatabaseCrud;
 import data.JobContracts;
@@ -118,23 +126,20 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
 
 
 
-
+    View rootView;
     CollapsingToolbarLayout collapsingToolbar ;
 
 
     public JobDetailFragment() {
         setHasOptionsMenu(true);
     }
-    public interface Callback {
-        /**
-         * DetailFragmentCallback for when an item has been selected.
-         */
-        public void onItemSelected(Uri dateUri);
-    }
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //all = "^Hi /and <bold #italics#adsfs Sometimes there is ^need XML,#code #in an Activity";
+
+
         all="";
         Bundle arguments = getArguments();
         if (arguments != null) {
@@ -144,7 +149,7 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
         data0 += "<body>"+forms+"</body>";
 
 
-        View rootView = inflater.inflate(R.layout.jobdetail_layout,
+       rootView = inflater.inflate(R.layout.jobdetail_layout,
                 container, false);
 
       // mContainerView = (ViewGroup) rootView.findViewById(R.id.container);
@@ -161,36 +166,44 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
 
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                //Toast.makeText(getApplication(),"sents", Toast.LENGTH_SHORT).show();
+
 
                 if ((((JobDetails)getActivity()).getStatus())){
-                   ;
+
                     ((JobDetails)getActivity()).hideFAB();
+                    ((JobDetails)getActivity()).setStatus(false);
+                    Toast.makeText(getActivity(),"hides", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-//
-//        FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fabshare);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // alarm.setAlarm(getApplicationContext());
-//
+
+         WebView = (WebView) rootView.findViewById(R.id.webview);
+
+        // Let's display the progress in the activity title bar, like the
+        // browser app does.
+
+
+        WebView.getSettings().setJavaScriptEnabled(true);
+
+//        final Activity activity =getActivity();
+//        WebView.setWebChromeClient(new WebChromeClient() {
+//            public void onProgressChanged(WebView view, int progress) {
+//                // Activities and WebViews measure progress with different scales.
+//                // The progress meter will automatically disappear when we reach 100%
+//                activity.setProgress(progress * 1000);
 //            }
 //        });
-//
+//        WebView.setWebViewClient(new WebViewClient() {
+//            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+//                Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+       // WebView.loadUrl("https://developer.android.com/");
 
 
 
-        // A= (TextView) rootView.findViewById(R.id.c);
-        // B = (TextView) rootView.findViewById(R.id.p);
-        // C=(TextView)rootView.findViewById(R.id.po);
-        // E=(TextView)rootView.findViewById(R.id.e);
-        // CO = (TextView) rootView.findViewById(R.id.contacts);
-        // EX = (TextView) rootView.findViewById(R.id.ex);
 
-                //or
-         WebView = (WebView) rootView.findViewById(R.id.webview);
 
 
         return rootView;
@@ -238,7 +251,7 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
             String Position ="<h2 style='text-align:center;'>"+data.getString(COL_p)+"</h2>";
 
 //            A.setText(Html.fromHtml(data.getString(COL_c)));
-        //    A.setTypeface(Roboto2);
+        // A.setTypeface(Roboto2);
          //   B.setText(Html.fromHtml(data.getString(COL_Po)));
          //   B.setTypeface(Roboto1);
 
@@ -249,6 +262,7 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
             //CO.setText(Html.fromHtml(data.getString(COL_contacts)));
            // EX.setText(Html.fromHtml(data.getString(COL_extras)));
                           //or
+
 
 
 
@@ -273,7 +287,7 @@ public class JobDetailFragment extends Fragment implements View.OnClickListener,
 //            settings.setJavaScriptEnabled(true);
 
             DatabaseCrud.ToOpenEntry(getActivity(),data.getString(COL_JOB),data.getString(COL_Po));
-           // data.getString(COL_p)
+
 
 
         }
@@ -308,7 +322,6 @@ super.onAttach(activity);
 
 }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -319,86 +332,7 @@ super.onAttach(activity);
 
 
 
-    public void animateFAB(){
 
-        if(isFabOpen){
-
-            fab.startAnimation(rotate_backward);
-            fab1.startAnimation(fab_close);
-            fab2.startAnimation(fab_close);
-            fab1.setClickable(false);
-            fab2.setClickable(false);
-            isFabOpen = false;
-            Log.d("Raj", "close");
-
-        } else {
-
-            fab.startAnimation(rotate_forward);
-            fab1.startAnimation(fab_open);
-            fab2.startAnimation(fab_open);
-            fab1.setClickable(true);
-            fab2.setClickable(true);
-            isFabOpen = true;
-            Log.d("Raj","open");
-
-        }
-
-
-    }
-
-    void addT(int j,int tag){
-        StringBuilder b = new StringBuilder();
-        char bre ='^';
-        char bre2='$';
-        char bre3='#';
-        char bre4='%';
-        for(int i=j+1;i<all.length();i++){
-            if(all.charAt(i)==bre||all.charAt(i)==bre2||all.charAt(i)==bre3||all.charAt(i)==bre4)
-                break;
-            b.append(all.charAt(i));
-            //System.out.println(i);
-        }
-        //System.out.println(b);
-        Log.v("values",b.toString());
-
-        switch(tag){
-            case 0:
-                TextView tv = new TextView(getActivity());
-                tv.setText(b.toString());
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP,20);
-                tv.setTypeface(Typeface.DEFAULT_BOLD);
-                tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                mContainerView.addView(tv);
-                break;
-            case 1:
-                TextView tv0 = new TextView(getActivity());
-                tv0.setText(b.toString());
-                tv0.setTextSize(TypedValue.COMPLEX_UNIT_SP,15);
-                tv0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                tv0.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
-                mContainerView.addView(tv0);
-                break;
-            case 2:
-                TextView tv1 = new TextView(getActivity());
-                tv1.setText(b.toString());
-                tv1.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-                mContainerView.addView(tv1);
-                break;
-            case 3:
-                TextView tv2 = new TextView(getActivity());
-                tv2.setText(b.toString());
-                tv2.setTextSize(TypedValue.COMPLEX_UNIT_SP,10);
-                mContainerView.addView(tv2);
-                break;
-            case 4:
-
-                break;
-            default:
-
-        }
-
-
-    }
 
     @Override
     public void onClick(View v) {
@@ -426,32 +360,10 @@ super.onAttach(activity);
             if (data != null && data.moveToFirst()) {
                 all=data.getString(COL_p);
                 data0+=all;
-                WebView.loadData(data0, "text/html", "UTF-8");
+              WebView.loadData(data0, "text/html", "UTF-8");
 
-//                for(int i=0;i<all.length();i++){
-//                    //System.out.print(all.charAt(i) );
-//
-//                    switch (all.charAt(i)) {
-//                        case '^': //Header
-//                            addT(i,0); //0 is Title
-//                            break;
-//                        case '$': //means a paragraph
-//                            addT(i,1);
-//                            break;
-//                        case '%': //means a list
-//                            addT(i,2);//2 is Italics
-//                            break;
-//                        case '#': //means bold
-//                            addT(i,3);
-//                            break;
-//                        default:
-//                            break;
-//                    }
-//                }
-
-
-
-
+//                Snackbar.make(rootView, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
 
         }

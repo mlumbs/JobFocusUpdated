@@ -27,18 +27,27 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         //Log.v(TAG, "OnReceive Method for alarm  has Started");
-        Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),"DD");
+        Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),"Received alarm broadcast");
         Intent service = new Intent(context, LoadService.class);
         startWakefulService(context, service);
     }
     public void setAlarm(Context context) {
-        Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),"Begin Alarm");
+        Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),"set alarm called Begin Alarm");
         alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         long min=1000*60; //minute
         long hour=min*60; //hour
-        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 3*hour, alarmIntent);//3 hour
+       // alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 3*hour, alarmIntent);//3 hour
+
+
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES, alarmIntent);
+
+
+
+
 
         // Enable {@code SampleBootReceiver} to automatically restart the alarm when the
         // device is rebooted.
@@ -48,7 +57,6 @@ public class AlarmReceiver extends WakefulBroadcastReceiver {
         pm.setComponentEnabledSetting(receiver,
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP);
-        Logs.appendLog(Logs.UnixToDate(System.currentTimeMillis()),"End Alarm");
     }
 
 
