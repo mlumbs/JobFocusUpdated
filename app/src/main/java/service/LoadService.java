@@ -55,7 +55,7 @@ public class LoadService extends IntentService {
     // public static final String URL_BASE = "http://jobshareapp.jobl.co.za/contentfeeds.php?";
     // public  static final String CV_url="http://192.168.43.27/content.php?";
    // public  static final String URL_BASE="http://jobshareapp.jobl.co.za/JobManagerV2/main/contentfeeds.php?"; //Real
-    public  static final String URL_BASE="http://192.168.56.1:8080/JobManagerV2/main/contentfeeds.php?";
+    public  static final String URL_BASE="http://192.168.56.1:8080/JobManagerV3/main/contentfeeds.php?";
     String QUERY_PARAM = "q";
     String db;
     SharedPreferences.Editor editor;
